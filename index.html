@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="origin"/>
+<title>CINEMA+ | Онлайн-кинотеатр</title>
+<meta name="description" content="Премиальный онлайн-кинотеатр — фильмы, сериалы и мультфильмы">
+
+<!-- Tailwind CSS через CDN (для чистого клиентского проекта без сборки) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          bg: {
+            DEFAULT: '#0b0c10',
+            surface: '#121218',
+            card: '#1e1e2d',
+          },
+          accent: {
+            DEFAULT: '#e50914',
+            hover: '#ff1f2e',
+          }
+        },
+        fontFamily: {
+          sans: ['Inter', 'system-ui', 'sans-serif'],
+        },
+        backdropBlur: {
+          xs: '2px',
+        }
+      }
+    }
+  }
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-bg text-white font-sans antialiased">
+
+<!-- ==================== HEADER ==================== -->
+<header id="header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+  <div class="glass-header">
+    <div class="max-w-[1600px] mx-auto px-4 md:px-8 py-3 flex items-center gap-4 md:gap-8">
+
+      <!-- Логотип -->
+      <a href="#" class="flex items-center gap-2 shrink-0" id="logo-home">
+        <span class="text-2xl md:text-3xl font-extrabold tracking-tight">
+          CINEMA<span class="text-accent">+</span>
+        </span>
+      </a>
+
+      <!-- Навигация (десктоп) -->
+      <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-300">
+        <a href="#" data-category="movie" class="nav-link hover:text-white transition-colors">Фильмы</a>
+        <a href="#" data-category="tv" class="nav-link hover:text-white transition-colors">Сериалы</a>
+        <a href="#" data-category="animation" class="nav-link hover:text-white transition-colors">Мультфильмы</a>
+        <a href="#" data-category="favorites" class="nav-link hover:text-white transition-colors">Избранное</a>
+      </nav>
+
+      <!-- Поиск -->
+      <div class="ml-auto flex items-center gap-3">
+        <div class="relative">
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Поиск фильмов и сериалов..."
+            class="w-24 sm:w-40 md:w-72 bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-accent/60 focus:bg-white/10 transition-all duration-300"
+            autocomplete="off"
+          />
+          <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
+        <!-- Авторизация / профиль -->
+        <button id="auth-open-btn" class="items-center gap-2 glass-btn px-4 py-2 rounded-full text-sm font-semibold hover:scale-105 active:scale-95 transition-all duration-300">
+          Войти
+        </button>
+        <button id="profile-open-btn" class="items-center gap-2 hover:scale-105 active:scale-95 transition-all duration-300">
+          <span id="profile-avatar" class="avatar-circle"></span>
+        </button>
+
+        <!-- Бургер (мобилка) -->
+        <button id="burger-btn" class="md:hidden p-2 rounded-lg hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-300">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <nav id="mobile-menu" class="hidden md:hidden flex flex-col gap-1 px-4 pb-4 text-sm font-medium text-gray-300">
+      <a href="#" data-category="movie" class="nav-link py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all duration-300">Фильмы</a>
+      <a href="#" data-category="tv" class="nav-link py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all duration-300">Сериалы</a>
+      <a href="#" data-category="animation" class="nav-link py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all duration-300">Мультфильмы</a>
+      <a href="#" data-category="favorites" class="nav-link py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all duration-300">Избранное</a>
+      <button id="mobile-auth-btn" class="text-left nav-link py-2.5 px-3 rounded-lg hover:bg-white/10 transition-all duration-300">Войти / Профиль</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ==================== ОСНОВНОЙ КОНТЕНТ ==================== -->
+<main id="main-content">
+
+  <!-- ---------- HERO / БАННЕР ---------- -->
+  <section id="hero" class="relative w-full h-[62vh] md:h-[82vh] min-h-[420px] overflow-hidden">
+    <div id="hero-skeleton" class="absolute inset-0 skeleton"></div>
+
+    <div id="hero-content" class="absolute inset-0 opacity-0 transition-opacity duration-700">
+      <img id="hero-backdrop" src="" alt="" class="absolute inset-0 w-full h-full object-cover object-top">
+      <div class="absolute inset-0 bg-gradient-to-t from-bg via-bg/60 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-bg/90 via-bg/20 to-transparent"></div>
+
+      <div class="relative z-10 h-full max-w-[1600px] mx-auto px-4 md:px-8 flex flex-col justify-end pb-16 md:pb-24">
+        <span class="inline-flex items-center gap-1.5 text-accent text-xs md:text-sm font-bold tracking-wide mb-3 uppercase">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1.323l3.954 1.582 1.599-.8a1 1 0 11.894 1.79l-1.233.616 1.738 5.42a1 1 0 01-.285 1.05A3.989 3.989 0 0115 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.715-5.349L11 6.477V16h2a1 1 0 110 2H7a1 1 0 110-2h2V6.477L6.237 7.582l1.715 5.349a1 1 0 01-.285 1.05A3.989 3.989 0 015 15a3.989 3.989 0 01-2.667-1.019 1 1 0 01-.285-1.05l1.738-5.42-1.233-.616a1 1 0 11.894-1.79l1.599.8L9 4.323V3a1 1 0 011-1z"/></svg>
+          Сейчас в тренде
+        </span>
+        <h1 id="hero-title" class="text-3xl md:text-6xl font-extrabold max-w-2xl leading-tight mb-4 drop-shadow-lg"></h1>
+        <p id="hero-overview" class="hidden md:block text-gray-300 max-w-xl text-base leading-relaxed mb-6 line-clamp-3"></p>
+
+        <div class="flex items-center gap-3">
+          <button id="hero-play-btn" class="flex items-center gap-2 bg-white text-black font-bold px-6 py-3 rounded-xl hover:bg-gray-200 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+            Смотреть
+          </button>
+          <button id="hero-info-btn" class="flex items-center gap-2 glass-btn font-semibold px-6 py-3 rounded-xl transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            Подробнее
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------- КОНТЕНТНЫЕ СЕКЦИИ ----------
+       content-wrapper: по умолчанию (главная, hero виден) — контент "наезжает"
+       на hero отрицательным отступом. Класс .no-hero (переключается в app.js
+       при скрытии hero: разделы Фильмы/Сериалы/Мультфильмы/Избранное/поиск)
+       заменяет отрицательный отступ на положительный padding-top, чтобы
+       фиксированная шапка больше не перекрывала первый ряд карточек. -->
+  <div id="content-wrapper" class="max-w-[1600px] mx-auto px-4 md:px-8 relative z-10 -mt-8 md:-mt-16 pb-24 transition-[padding,margin] duration-300">
+
+    <!-- Панель фильтров и сортировки -->
+    <div id="filters-bar" class="hidden flex-wrap gap-3 mb-8 items-center">
+      <select id="filter-sort" class="filter-select">
+        <option value="popularity.desc">По популярности</option>
+        <option value="vote_average.desc">По рейтингу</option>
+        <option value="primary_release_date.desc">По дате выхода</option>
+      </select>
+      <select id="filter-genre" class="filter-select">
+        <option value="">Все жанры</option>
+      </select>
+      <select id="filter-year" class="filter-select">
+        <option value="">Любой год</option>
+      </select>
+      <select id="filter-rating" class="filter-select">
+        <option value="">Любой рейтинг</option>
+        <option value="7">7+ ★</option>
+        <option value="8">8+ ★</option>
+        <option value="9">9+ ★</option>
+      </select>
+      <button id="filter-reset" class="text-sm text-gray-400 hover:text-white hover:scale-105 transition-all duration-300 underline underline-offset-4">
+        Сбросить
+      </button>
+    </div>
+
+    <!-- Результаты поиска / фильтров -->
+    <section id="search-results-section" class="hidden mb-14">
+      <h2 class="text-xl md:text-2xl font-bold mb-5" id="search-results-title">Результаты поиска</h2>
+      <div id="search-results-grid" class="content-grid"></div>
+      <p id="search-empty" class="hidden text-gray-400 text-center py-16">Ничего не найдено. Попробуйте другой запрос.</p>
+    </section>
+
+    <!-- Динамические слайдеры (Тренды / Популярное / Новинки и т.д.) -->
+    <div id="rows-container"></div>
+
+  </div>
+</main>
+
+<!-- ==================== МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ ==================== -->
+<div id="modal-overlay" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm p-0 md:p-6 overflow-y-auto">
+  <div id="modal-card" class="relative w-full md:max-w-4xl md:mx-auto bg-bg-surface md:rounded-2xl overflow-hidden shadow-2xl min-h-screen md:min-h-0 border border-white/10">
+
+    <button id="modal-close" class="absolute top-4 right-4 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+
+    <div id="modal-body">
+      <!-- Заполняется динамически из js/ui.js -->
+    </div>
+  </div>
+</div>
+
+
+<!-- ==================== МОДАЛКА АВТОРИЗАЦИИ (Вход / Регистрация) ==================== -->
+<div id="auth-overlay" class="hidden fixed inset-0 z-[110] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+  <div class="relative w-full max-w-sm bg-bg-surface rounded-2xl border border-white/10 p-6 md:p-8 shadow-2xl fade-in">
+    <button id="auth-close" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 hover:scale-105 active:scale-95 transition-all duration-300">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+
+    <div class="flex gap-6 mb-6 border-b border-white/10">
+      <div class="profile-tab active" data-auth-tab="login">Вход</div>
+      <div class="profile-tab" data-auth-tab="register">Регистрация</div>
+    </div>
+
+    <!-- Форма входа -->
+    <form id="login-form" class="flex flex-col gap-3" novalidate>
+      <div>
+        <input type="email" placeholder="Email" class="auth-input" id="login-email" autocomplete="email">
+        <p class="field-error hidden" data-error-for="login-email"></p>
+      </div>
+      <div>
+        <input type="password" placeholder="Пароль" class="auth-input" id="login-password" autocomplete="current-password">
+        <p class="field-error hidden" data-error-for="login-password"></p>
+      </div>
+      <p id="login-error" class="hidden text-xs text-red-400"></p>
+      <button type="submit" class="mt-2 bg-accent hover:bg-accent-hover hover:scale-105 active:scale-95 transition-all duration-300 font-bold py-3 rounded-xl shadow-glow">
+        Войти
+      </button>
+    </form>
+
+    <!-- Форма регистрации -->
+    <form id="register-form" class="hidden flex-col gap-3" novalidate>
+      <div>
+        <input type="text" placeholder="Имя" class="auth-input" id="register-name" autocomplete="name">
+        <p class="field-error hidden" data-error-for="register-name"></p>
+      </div>
+      <div>
+        <input type="email" placeholder="Email" class="auth-input" id="register-email" autocomplete="email">
+        <p class="field-error hidden" data-error-for="register-email"></p>
+      </div>
+      <div>
+        <input type="password" placeholder="Пароль (мин. 6 символов)" class="auth-input" id="register-password" autocomplete="new-password">
+        <p class="field-error hidden" data-error-for="register-password"></p>
+      </div>
+      <div>
+        <input type="password" placeholder="Повторите пароль" class="auth-input" id="register-password-confirm" autocomplete="new-password">
+        <p class="field-error hidden" data-error-for="register-password-confirm"></p>
+      </div>
+      <p id="register-error" class="hidden text-xs text-red-400"></p>
+      <button type="submit" class="mt-2 bg-accent hover:bg-accent-hover hover:scale-105 active:scale-95 transition-all duration-300 font-bold py-3 rounded-xl shadow-glow">
+        Создать аккаунт
+      </button>
+    </form>
+
+    <p class="text-[11px] text-gray-500 mt-5 text-center leading-relaxed">
+      Демонстрационная авторизация: данные хранятся только в localStorage вашего браузера
+      и не отправляются на сервер.
+    </p>
+  </div>
+</div>
+
+<!-- ==================== МОДАЛКА ПРОФИЛЯ ==================== -->
+<div id="profile-overlay" class="hidden fixed inset-0 z-[110] bg-black/80 backdrop-blur-sm flex items-start md:items-center justify-center p-0 md:p-4 overflow-y-auto">
+  <div class="relative w-full md:max-w-2xl md:mx-auto bg-bg-surface md:rounded-2xl border border-white/10 shadow-2xl min-h-screen md:min-h-0 md:max-h-[88vh] md:overflow-y-auto fade-in">
+
+    <button id="profile-close" class="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full bg-black/40 hover:bg-black/70 hover:scale-105 active:scale-95 transition-all duration-300">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+
+    <div class="p-6 md:p-8">
+      <div class="flex items-center gap-4 mb-4">
+        <button id="profile-avatar-btn" class="relative shrink-0 group hover:scale-105 active:scale-95 transition-all duration-300" title="Изменить аватар в настройках" type="button">
+          <span id="profile-modal-avatar" class="avatar-circle !w-16 !h-16 !text-2xl"></span>
+        </button>
+        <div class="min-w-0 flex-1">
+          <h2 id="profile-name" class="text-lg md:text-xl font-bold truncate"></h2>
+          <p id="profile-email" class="text-sm text-gray-400 truncate"></p>
+        </div>
+        <button id="logout-btn" class="shrink-0 text-sm text-gray-400 hover:text-accent hover:scale-105 transition-all duration-300 underline underline-offset-4">
+          Выйти
+        </button>
+      </div>
+
+      <!-- Статистика профиля -->
+      <div class="flex gap-5 text-xs text-gray-400 mb-6">
+        <span><strong id="stat-favorites" class="text-white font-bold text-sm">0</strong> в избранном</span>
+        <span><strong id="stat-history" class="text-white font-bold text-sm">0</strong> в истории</span>
+      </div>
+
+      <div class="flex gap-6 mb-6 border-b border-white/10 overflow-x-auto">
+        <div class="profile-tab active shrink-0" data-profile-tab="favorites">Избранное</div>
+        <div class="profile-tab shrink-0" data-profile-tab="history">История</div>
+        <div class="profile-tab shrink-0" data-profile-tab="settings">Настройки</div>
+      </div>
+
+      <div id="profile-favorites-panel" class="content-grid"></div>
+      <div id="profile-history-panel" class="hidden flex-col gap-3"></div>
+
+      <!-- Вкладка "Настройки" -->
+      <div id="profile-settings-panel" class="hidden flex-col gap-8">
+
+        <!-- Аватар -->
+        <div>
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wide mb-3">Аватар</h3>
+          <div class="flex flex-wrap gap-2.5 mb-3" id="avatar-preset-grid"></div>
+          <div class="flex flex-wrap items-center gap-3">
+            <button id="avatar-upload-btn" type="button" class="glass-btn px-4 py-2 rounded-lg text-sm font-semibold hover:scale-105 active:scale-95 transition-all duration-300">
+              Загрузить своё фото
+            </button>
+            <button id="avatar-reset-btn" type="button" class="text-sm text-gray-400 hover:text-white hover:scale-105 transition-all duration-300 underline underline-offset-4">
+              Сбросить к инициалу
+            </button>
+            <input type="file" id="avatar-file-input" accept="image/*" class="hidden">
+          </div>
+          <p id="avatar-upload-error" class="hidden text-xs text-red-400 mt-2"></p>
+        </div>
+
+        <!-- Имя -->
+        <form id="edit-name-form" class="flex flex-col gap-3 max-w-sm" novalidate>
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wide">Имя</h3>
+          <div>
+            <input type="text" id="edit-name-input" class="auth-input" autocomplete="name">
+            <p class="field-error hidden" data-error-for="edit-name-input"></p>
+          </div>
+          <button type="submit" class="self-start bg-accent hover:bg-accent-hover hover:scale-105 active:scale-95 transition-all duration-300 font-bold px-5 py-2.5 rounded-xl text-sm">
+            Сохранить имя
+          </button>
+        </form>
+
+        <!-- Пароль -->
+        <form id="edit-password-form" class="flex flex-col gap-3 max-w-sm" novalidate>
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wide">Изменить пароль</h3>
+          <div>
+            <input type="password" id="edit-current-password" placeholder="Текущий пароль" class="auth-input" autocomplete="current-password">
+            <p class="field-error hidden" data-error-for="edit-current-password"></p>
+          </div>
+          <div>
+            <input type="password" id="edit-new-password" placeholder="Новый пароль (мин. 6 символов)" class="auth-input" autocomplete="new-password">
+            <p class="field-error hidden" data-error-for="edit-new-password"></p>
+          </div>
+          <div>
+            <input type="password" id="edit-new-password-confirm" placeholder="Повторите новый пароль" class="auth-input" autocomplete="new-password">
+            <p class="field-error hidden" data-error-for="edit-new-password-confirm"></p>
+          </div>
+          <p id="edit-password-error" class="hidden text-xs text-red-400"></p>
+          <button type="submit" class="self-start bg-accent hover:bg-accent-hover hover:scale-105 active:scale-95 transition-all duration-300 font-bold px-5 py-2.5 rounded-xl text-sm">
+            Сменить пароль
+          </button>
+        </form>
+
+        <!-- Данные -->
+        <div>
+          <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wide mb-3">Данные</h3>
+          <div id="clear-history-zone" class="flex items-center gap-3 flex-wrap">
+            <button id="clear-history-btn" type="button" class="text-sm text-red-400 hover:text-red-300 hover:scale-105 transition-all duration-300 underline underline-offset-4">
+              Очистить всю историю просмотров
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== МОДАЛЬНОЕ ОКНО АКТЁРА ==================== -->
+<div id="actor-overlay" class="hidden fixed inset-0 z-[105] bg-black/80 backdrop-blur-sm p-0 md:p-6 overflow-y-auto">
+  <div class="relative w-full md:max-w-3xl md:mx-auto bg-bg-surface md:rounded-2xl overflow-hidden shadow-2xl min-h-screen md:min-h-0 border border-white/10 fade-in">
+
+    <button id="actor-modal-close" class="absolute top-4 right-4 z-20 w-10 h-10 flex items-center justify-center rounded-full bg-black/50 hover:bg-black/80 hover:scale-105 active:scale-95 transition-all duration-300">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+
+    <div id="actor-modal-body" class="p-6 md:p-8">
+      <!-- Заполняется динамически из js/actors.js -->
+    </div>
+  </div>
+</div>
+
+<!-- Тост-уведомления -->
+<div id="toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] glass-btn px-5 py-3 rounded-xl text-sm font-medium"></div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/favorites.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/player.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/actors.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
