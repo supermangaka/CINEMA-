@@ -80,6 +80,7 @@ npx serve .
 ## 4. Авторизация и профиль
 
 Реализована полностью клиентская демо-авторизация (`js/auth.js`):
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/367e8860-9e17-42d1-8707-66f0ce55019d" />
 
 - Регистрация и вход хранятся в `localStorage` (пароли хешируются через
   `crypto.subtle.digest('SHA-256', ...)` — это НЕ криптографически стойкое хранение
