@@ -65,6 +65,7 @@ npx serve .
 
 - Вкладка **«Трейлер»** работает «из коробки» — использует официальные YouTube-ссылки
   из ответа TMDb.
+<img width="1920" height="1080" alt="Screenshot 2026-08-28 183010" src="https://github.com/user-attachments/assets/aa67c56e-63eb-408c-8f13-75056dfa0f2f" />
 
 
 Чтобы добавить ещё серверы, допишите объект в массив, который возвращает `getSources()`
@@ -99,6 +100,7 @@ npx serve .
   использует поле `first_air_date` вместо `primary_release_date` — это учтено в `api.js`).
 - **Жанр** — выпадающий список, загружается динамически из TMDb под выбранный раздел.
 - **Год** и **минимальный рейтинг** — дополнительные фильтры.
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/ee0ed29b-f07b-4430-a413-6ef3bd8e5483" />
 
 Все фильтры и сортировка комбинируются и отправляются одним запросом к `/discover`.
 
@@ -106,6 +108,7 @@ npx serve .
 
 Актёры в блоке «В ролях» кликабельны (курсор-поинтер, hover-подсветка аватара и
 роли). Клик открывает модальное окно `js/actors.js` с данными из TMDb:
+<img width="1920" height="1080" alt="Screenshot 2026-08-28 183049" src="https://github.com/user-attachments/assets/e748ce8f-2008-4418-ac14-8733419fcfda" />
 
 - фото, полное имя, дата и место рождения, возраст, сфера деятельности;
 - биография (`/person/{id}`);
@@ -139,3 +142,7 @@ email (`generateAvatarColor`), который сохраняется в сесс
 - **Избранное**: сохраняется в `localStorage`, отдельный раздел в навигации и вкладка в профиле
 - **Авторизация и профиль**: вход/регистрация с валидацией полей, персональный цвет аватара, история просмотров, привязанная к аккаунту
 - **UX**: glassmorphism-шапка с блюром, skeleton loaders на время загрузки, hover/active-микроанимации на всех интерактивных элементах, полностью адаптивная сетка (2 колонки на мобильном → 6 на широких экранах)
+<img width="1920" height="1080" alt="Screenshot 2026-08-28 180216" src="https://github.com/user-attachments/assets/f375c724-cffd-4c54-b309-43d5eeb4e74a" />
+<img width="1920" height="1080" alt="Screenshot 2026-08-28 180233" src="https://github.com/user-attachments/assets/6c676138-2c4e-4941-8a5f-6a29fd301069" />
+<img width="1920" height="1080" alt="Screenshot 2026-08-28 182954" src="https://github.com/user-attachments/assets/a724b61f-af6f-4e1e-abb8-6051f039fafc" />
+<img width="1920" height="1080" alt="Screenshot 2026-08-28 183242" src="https://github.com/user-attachments/assets/af66f991-ed2c-45c2-bdd1-d5d724f4e7e9" />
