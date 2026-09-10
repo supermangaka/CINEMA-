@@ -112,6 +112,7 @@ const Player = (() => {
   mozallowfullscreen="true"
   loading="lazy"
   sandbox="allow-scripts allow-same-origin allow-forms allow-presentation allow-orientation-lock"
+  referrerpolicy="no-referrer"
   referrerpolicy="strict-origin-when-cross-origin"
   data-player-iframe
 ></iframe>
